@@ -1,0 +1,1766 @@
+```html
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Учёт шин</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #f5f5f7;
+            --card: rgba(255,255,255,0.88);
+            --text: #1d1d1f;
+            --secondary: #86868b;
+            --border: rgba(0,0,0,0.08);
+            --blue: #007aff;
+            --green: #34c759;
+            --red: #ff3b30;
+            --orange: #ff9500;
+            --shadow: 0 10px 35px rgba(0,0,0,0.06);
+            --radius: 22px;
+        }
+
+        body {
+            margin: 0;
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "SF Pro Display",
+                "Segoe UI",
+                Arial,
+                sans-serif;
+
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        button,
+        input,
+        select {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        /* -------------------------
+           APP
+        ------------------------- */
+
+        .app {
+            min-height: 100vh;
+        }
+
+        /* -------------------------
+           HEADER
+        ------------------------- */
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+
+            background: rgba(245,245,247,0.82);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header-inner {
+            max-width: 1200px;
+            margin: auto;
+
+            padding: 18px 24px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 13px;
+
+            background: #ffffff;
+
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+
+            font-size: 22px;
+        }
+
+        .logo-title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .logo-subtitle {
+            font-size: 12px;
+            color: var(--secondary);
+            margin-top: 2px;
+        }
+
+        /* -------------------------
+           MAIN
+        ------------------------- */
+
+        main {
+            max-width: 1200px;
+            margin: auto;
+            padding: 32px 24px 60px;
+        }
+
+        .page-title {
+            margin-bottom: 25px;
+        }
+
+        .page-title h1 {
+            margin: 0;
+            font-size: 34px;
+            letter-spacing: -1px;
+        }
+
+        .page-title p {
+            margin: 7px 0 0;
+            color: var(--secondary);
+        }
+
+        /* -------------------------
+           STAT CARDS
+        ------------------------- */
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+
+            padding: 22px;
+
+            box-shadow: var(--shadow);
+        }
+
+        .stat-label {
+            color: var(--secondary);
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .stat-value {
+            font-size: 34px;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+
+        .stat-card.green .stat-value {
+            color: var(--green);
+        }
+
+        .stat-card.red .stat-value {
+            color: var(--red);
+        }
+
+        .stat-card.blue .stat-value {
+            color: var(--blue);
+        }
+
+        /* -------------------------
+           ACTIONS
+        ------------------------- */
+
+        .actions {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .btn {
+            border: none;
+            border-radius: 15px;
+
+            padding: 13px 20px;
+
+            font-weight: 600;
+
+            transition:
+                transform .15s ease,
+                opacity .15s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn:active {
+            transform: scale(.97);
+        }
+
+        .btn-primary {
+            background: var(--blue);
+            color: white;
+        }
+
+        .btn-green {
+            background: var(--green);
+            color: white;
+        }
+
+        .btn-red {
+            background: var(--red);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        /* -------------------------
+           CARD
+        ------------------------- */
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+
+            box-shadow: var(--shadow);
+
+            overflow: hidden;
+
+            margin-bottom: 24px;
+        }
+
+        .card-header {
+            padding: 20px 22px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        /* -------------------------
+           TABLE
+        ------------------------- */
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            padding: 13px 15px;
+
+            color: var(--secondary);
+            font-size: 13px;
+            font-weight: 600;
+
+            background: rgba(0,0,0,.025);
+        }
+
+        td {
+            padding: 15px;
+
+            border-top: 1px solid var(--border);
+
+            font-size: 14px;
+        }
+
+        tr:hover td {
+            background: rgba(0,122,255,.025);
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+
+            padding: 6px 10px;
+
+            border-radius: 10px;
+
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .badge-in {
+            background: rgba(52,199,89,.12);
+            color: #248a3d;
+        }
+
+        .badge-out {
+            background: rgba(255,59,48,.12);
+            color: #d70015;
+        }
+
+        .quantity-in {
+            color: var(--green);
+            font-weight: 700;
+        }
+
+        .quantity-out {
+            color: var(--red);
+            font-weight: 700;
+        }
+
+        .delete-btn {
+            border: none;
+            background: transparent;
+            color: var(--secondary);
+
+            padding: 6px 8px;
+            border-radius: 8px;
+        }
+
+        .delete-btn:hover {
+            background: rgba(255,59,48,.1);
+            color: var(--red);
+        }
+
+        /* -------------------------
+           MODAL
+        ------------------------- */
+
+        .modal {
+            position: fixed;
+            inset: 0;
+
+            background: rgba(0,0,0,.35);
+
+            display: none;
+            align-items: center;
+            justify-content: center;
+
+            padding: 20px;
+
+            z-index: 100;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-box {
+            width: 100%;
+            max-width: 480px;
+
+            background: white;
+
+            border-radius: 26px;
+
+            padding: 25px;
+
+            box-shadow: 0 30px 80px rgba(0,0,0,.2);
+
+            animation: modalIn .18s ease;
+        }
+
+        @keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: scale(.96) translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 17px;
+        }
+
+        label {
+            display: block;
+
+            font-size: 13px;
+            font-weight: 600;
+
+            margin-bottom: 7px;
+        }
+
+        input,
+        select {
+            width: 100%;
+
+            padding: 13px 14px;
+
+            border: 1px solid #d2d2d7;
+            border-radius: 13px;
+
+            outline: none;
+
+            background: #fff;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(0,122,255,.12);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+
+            margin-top: 22px;
+        }
+
+        .modal-actions button {
+            flex: 1;
+        }
+
+        /* -------------------------
+           EMPTY
+        ------------------------- */
+
+        .empty {
+            text-align: center;
+            padding: 50px 20px;
+
+            color: var(--secondary);
+        }
+
+        .empty-icon {
+            font-size: 42px;
+            margin-bottom: 10px;
+        }
+
+        /* -------------------------
+           RESPONSIVE
+        ------------------------- */
+
+        @media (max-width: 850px) {
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+        }
+
+        @media (max-width: 600px) {
+
+            .header-inner {
+                padding: 14px 16px;
+            }
+
+            main {
+                padding: 25px 16px 50px;
+            }
+
+            .page-title h1 {
+                font-size: 29px;
+            }
+
+            .stats {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+
+            .stat-card {
+                padding: 16px;
+            }
+
+            .stat-value {
+                font-size: 27px;
+            }
+
+            .actions {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .btn {
+                padding: 13px 10px;
+            }
+
+            .card-header {
+                padding: 17px;
+            }
+
+            .card-body {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- HEADER -->
+
+    <header>
+        <div class="header-inner">
+
+            <div class="logo">
+
+                <div class="logo-icon">
+                    🛞
+                </div>
+
+                <div>
+                    <div class="logo-title">
+                        Учёт шин
+                    </div>
+
+                    <div class="logo-subtitle">
+                        Управление остатками
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </header>
+
+
+    <!-- MAIN -->
+
+    <main>
+
+        <div class="page-title">
+
+            <h1>
+                Баланс
+            </h1>
+
+            <p>
+                Контроль движения шин
+            </p>
+
+        </div>
+
+
+        <!-- STATISTICS -->
+
+        <div class="stats">
+
+            <div class="stat-card blue">
+
+                <div class="stat-label">
+                    Всего на складе
+                </div>
+
+                <div
+                    class="stat-value"
+                    id="totalBalance"
+                >
+                    0
+                </div>
+
+            </div>
+
+
+            <div class="stat-card green">
+
+                <div class="stat-label">
+                    Приход
+                </div>
+
+                <div
+                    class="stat-value"
+                    id="totalIn"
+                >
+                    0
+                </div>
+
+            </div>
+
+
+            <div class="stat-card red">
+
+                <div class="stat-label">
+                    Расход
+                </div>
+
+                <div
+                    class="stat-value"
+                    id="totalOut"
+                >
+                    0
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-label">
+                    Операций
+                </div>
+
+                <div
+                    class="stat-value"
+                    id="operationsCount"
+                >
+                    0
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ACTIONS -->
+
+        <div class="actions">
+
+            <button
+                class="btn btn-green"
+                onclick="openModal('in')"
+            >
+                ＋ Приход
+            </button>
+
+
+            <button
+                class="btn btn-red"
+                onclick="openModal('out')"
+            >
+                − Выдать
+            </button>
+
+        </div>
+
+
+        <!-- BALANCE -->
+
+        <div class="card">
+
+            <div class="card-header">
+
+                <div class="card-title">
+                    Остаток по размерам
+                </div>
+
+            </div>
+
+            <div class="card-body">
+
+                <div
+                    class="table-wrapper"
+                    id="balanceTable"
+                ></div>
+
+            </div>
+
+        </div>
+
+
+        <!-- OPERATIONS -->
+
+        <div class="card">
+
+            <div class="card-header">
+
+                <div class="card-title">
+                    Последние операции
+                </div>
+
+                <button
+                    class="btn btn-secondary"
+                    onclick="renderOperations()"
+                >
+                    Обновить
+                </button>
+
+            </div>
+
+            <div class="card-body">
+
+                <div
+                    class="table-wrapper"
+                    id="operationsTable"
+                ></div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<!-- MODAL -->
+
+<div
+    class="modal"
+    id="operationModal"
+>
+
+    <div class="modal-box">
+
+        <div
+            class="modal-title"
+            id="modalTitle"
+        >
+            Приход шин
+        </div>
+
+
+        <form id="operationForm">
+
+            <div class="form-group">
+
+                <label>
+                    Дата
+                </label>
+
+                <input
+                    type="date"
+                    id="date"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Организация
+                </label>
+
+                <input
+                    type="text"
+                    id="organization"
+                    placeholder="Например: Майнтрак"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Размер шины
+                </label>
+
+                <select
+                    id="size"
+                    required
+                >
+
+                    <option value="">
+                        Выберите размер
+                    </option>
+
+                    <option value="315/70 R22.5">
+                        315/70 R22.5
+                    </option>
+
+                    <option value="315/60 R22.5">
+                        315/60 R22.5
+                    </option>
+
+                    <option value="385/65 R22.5">
+                        385/65 R22.5
+                    </option>
+
+                    <option value="385/55 R22.5">
+                        385/55 R22.5
+                    </option>
+
+                    <option value="385/65 R19.5">
+                        385/65 R19.5
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Количество
+                </label>
+
+                <input
+                    type="number"
+                    id="quantity"
+                    min="1"
+                    step="1"
+                    placeholder="0"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Комментарий
+                </label>
+
+                <input
+                    type="text"
+                    id="comment"
+                    placeholder="Необязательно"
+                >
+
+            </div>
+
+
+            <div class="modal-actions">
+
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    onclick="closeModal()"
+                >
+                    Отмена
+                </button>
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    Сохранить
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    /*
+    ==========================================
+    УЧЁТ ШИН — ЭТАП 1
+    ==========================================
+
+    Пока данные хранятся в localStorage.
+
+    На следующем этапе этот слой данных
+    можно заменить на Google Sheets,
+    практически не меняя интерфейс.
+    */
+
+
+    const STORAGE_KEY = "tire_inventory_operations";
+
+
+    let currentOperationType = "in";
+
+
+    /*
+    ------------------------------------------
+    Получение операций
+    ------------------------------------------
+    */
+
+    function getOperations() {
+
+        const data = localStorage.getItem(STORAGE_KEY);
+
+        if (!data) {
+            return [];
+        }
+
+        try {
+
+            return JSON.parse(data);
+
+        } catch (error) {
+
+            console.error(
+                "Ошибка чтения данных:",
+                error
+            );
+
+            return [];
+        }
+    }
+
+
+    /*
+    ------------------------------------------
+    Сохранение операций
+    ------------------------------------------
+    */
+
+    function saveOperations(operations) {
+
+        localStorage.setItem(
+            STORAGE_KEY,
+            JSON.stringify(operations)
+        );
+
+    }
+
+
+    /*
+    ------------------------------------------
+    Открытие окна
+    ------------------------------------------
+    */
+
+    function openModal(type) {
+
+        currentOperationType = type;
+
+        const modal =
+            document.getElementById("operationModal");
+
+        const title =
+            document.getElementById("modalTitle");
+
+        if (type === "in") {
+
+            title.textContent =
+                "Приход шин";
+
+        } else {
+
+            title.textContent =
+                "Выдача шин";
+
+        }
+
+
+        const dateInput =
+            document.getElementById("date");
+
+        dateInput.value =
+            new Date()
+                .toISOString()
+                .split("T")[0];
+
+
+        document
+            .getElementById("operationForm")
+            .reset();
+
+
+        dateInput.value =
+            new Date()
+                .toISOString()
+                .split("T")[0];
+
+
+        modal.classList.add("active");
+
+    }
+
+
+    /*
+    ------------------------------------------
+    Закрытие окна
+    ------------------------------------------
+    */
+
+    function closeModal() {
+
+        document
+            .getElementById("operationModal")
+            .classList.remove("active");
+
+    }
+
+
+    /*
+    ------------------------------------------
+    Добавление операции
+    ------------------------------------------
+    */
+
+    document
+        .getElementById("operationForm")
+        .addEventListener(
+            "submit",
+            function(event) {
+
+                event.preventDefault();
+
+
+                const date =
+                    document.getElementById("date").value;
+
+
+                const organization =
+                    document
+                        .getElementById("organization")
+                        .value
+                        .trim();
+
+
+                const size =
+                    document.getElementById("size").value;
+
+
+                const quantity =
+                    Number(
+                        document
+                            .getElementById("quantity")
+                            .value
+                    );
+
+
+                const comment =
+                    document
+                        .getElementById("comment")
+                        .value
+                        .trim();
+
+
+                if (
+                    !date ||
+                    !organization ||
+                    !size ||
+                    !quantity ||
+                    quantity <= 0
+                ) {
+
+                    alert(
+                        "Заполните все обязательные поля."
+                    );
+
+                    return;
+                }
+
+
+                /*
+                Проверяем расход.
+
+                Нельзя выдать больше,
+                чем есть на складе.
+                */
+
+                if (
+                    currentOperationType === "out"
+                ) {
+
+                    const balance =
+                        getSizeBalance(size);
+
+                    if (quantity > balance) {
+
+                        alert(
+                            `Недостаточно шин.\n\n` +
+                            `Размер: ${size}\n` +
+                            `Доступно: ${balance} шт.`
+                        );
+
+                        return;
+                    }
+
+                }
+
+
+                const operations =
+                    getOperations();
+
+
+                const operation = {
+
+                    id:
+                        Date.now(),
+
+                    date,
+
+                    type:
+                        currentOperationType,
+
+                    organization,
+
+                    size,
+
+                    quantity,
+
+                    comment,
+
+                    createdAt:
+                        new Date().toISOString()
+
+                };
+
+
+                operations.push(operation);
+
+
+                saveOperations(operations);
+
+
+                closeModal();
+
+
+                renderAll();
+
+            }
+        );
+
+
+    /*
+    ------------------------------------------
+    Баланс конкретного размера
+    ------------------------------------------
+    */
+
+    function getSizeBalance(size) {
+
+        const operations =
+            getOperations();
+
+
+        let balance = 0;
+
+
+        operations.forEach(operation => {
+
+            if (operation.size !== size) {
+                return;
+            }
+
+
+            if (operation.type === "in") {
+
+                balance +=
+                    Number(operation.quantity);
+
+            } else {
+
+                balance -=
+                    Number(operation.quantity);
+
+            }
+
+        });
+
+
+        return balance;
+
+    }
+
+
+    /*
+    ------------------------------------------
+    Общая статистика
+    ------------------------------------------
+    */
+
+    function calculateStatistics() {
+
+        const operations =
+            getOperations();
+
+
+        let totalIn = 0;
+
+        let totalOut = 0;
+
+
+        operations.forEach(operation => {
+
+            if (operation.type === "in") {
+
+                totalIn +=
+                    Number(operation.quantity);
+
+            } else {
+
+                totalOut +=
+                    Number(operation.quantity);
+
+            }
+
+        });
+
+
+        return {
+
+            totalIn,
+
+            totalOut,
+
+            balance:
+                totalIn - totalOut,
+
+            count:
+                operations.length
+
+        };
+
+    }
+
+
+    /*
+    ------------------------------------------
+    Обновление карточек
+    ------------------------------------------
+    */
+
+    function renderStatistics() {
+
+        const stats =
+            calculateStatistics();
+
+
+        document
+            .getElementById("totalBalance")
+            .textContent =
+            stats.balance;
+
+
+        document
+            .getElementById("totalIn")
+            .textContent =
+            stats.totalIn;
+
+
+        document
+            .getElementById("totalOut")
+            .textContent =
+            stats.totalOut;
+
+
+        document
+            .getElementById("operationsCount")
+            .textContent =
+            stats.count;
+
+    }
+
+
+    /*
+    ------------------------------------------
+    Баланс по размерам
+    ------------------------------------------
+    */
+
+    function renderBalance() {
+
+        const operations =
+            getOperations();
+
+
+        const sizes =
+            [
+                "315/70 R22.5",
+                "315/60 R22.5",
+                "385/65 R22.5",
+                "385/55 R22.5",
+                "385/65 R19.5"
+            ];
+
+
+        const balances = {};
+
+
+        sizes.forEach(size => {
+
+            balances[size] =
+                getSizeBalance(size);
+
+        });
+
+
+        const usedSizes =
+            [...new Set(
+                operations.map(
+                    operation => operation.size
+                )
+            )];
+
+
+        usedSizes.forEach(size => {
+
+            if (
+                !balances.hasOwnProperty(size)
+            ) {
+
+                balances[size] =
+                    getSizeBalance(size);
+
+            }
+
+        });
+
+
+        const rows =
+            Object.entries(balances)
+                .filter(
+                    ([size, balance]) =>
+                        balance !== 0 ||
+                        operations.some(
+                            operation =>
+                                operation.size === size
+                        )
+                );
+
+
+        const container =
+            document.getElementById(
+                "balanceTable"
+            );
+
+
+        if (!rows.length) {
+
+            container.innerHTML = `
+
+                <div class="empty">
+
+                    <div class="empty-icon">
+                        🛞
+                    </div>
+
+                    Пока нет данных
+
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+
+        let html = `
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>Размер</th>
+
+                        <th>Остаток</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+        `;
+
+
+        rows.forEach(
+            ([size, balance]) => {
+
+                html += `
+
+                    <tr>
+
+                        <td>
+                            <strong>
+                                ${escapeHtml(size)}
+                            </strong>
+                        </td>
+
+                        <td>
+                            <strong>
+                                ${balance} шт.
+                            </strong>
+                        </td>
+
+                    </tr>
+
+                `;
+
+            }
+        );
+
+
+        html += `
+
+                </tbody>
+
+            </table>
+
+        `;
+
+
+        container.innerHTML =
+            html;
+
+    }
+
+
+    /*
+    ------------------------------------------
+    История операций
+    ------------------------------------------
+    */
+
+    function renderOperations() {
+
+        const operations =
+            getOperations()
+                .sort(
+                    (a,b) =>
+                        new Date(b.createdAt) -
+                        new Date(a.createdAt)
+                );
+
+
+        const container =
+            document.getElementById(
+                "operationsTable"
+            );
+
+
+        if (!operations.length) {
+
+            container.innerHTML = `
+
+                <div class="empty">
+
+                    <div class="empty-icon">
+                        📋
+                    </div>
+
+                    Операций пока нет
+
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+
+        let html = `
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>Дата</th>
+
+                        <th>Операция</th>
+
+                        <th>Организация</th>
+
+                        <th>Размер</th>
+
+                        <th>Количество</th>
+
+                        <th></th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+        `;
+
+
+        operations.forEach(
+            operation => {
+
+                const isIn =
+                    operation.type === "in";
+
+
+                html += `
+
+                    <tr>
+
+                        <td>
+                            ${formatDate(operation.date)}
+                        </td>
+
+                        <td>
+
+                            <span class="badge ${
+                                isIn
+                                    ? "badge-in"
+                                    : "badge-out"
+                            }">
+
+                                ${
+                                    isIn
+                                        ? "ПРИХОД"
+                                        : "РАСХОД"
+                                }
+
+                            </span>
+
+                        </td>
+
+                        <td>
+                            ${escapeHtml(
+                                operation.organization
+                            )}
+                        </td>
+
+                        <td>
+                            ${escapeHtml(
+                                operation.size
+                            )}
+                        </td>
+
+                        <td>
+
+                            <span class="${
+                                isIn
+                                    ? "quantity-in"
+                                    : "quantity-out"
+                            }">
+
+                                ${
+                                    isIn
+                                        ? "+"
+                                        : "-"
+                                }${operation.quantity}
+
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <button
+                                class="delete-btn"
+                                onclick="deleteOperation(${operation.id})"
+                                title="Удалить"
+                            >
+                                ×
+                            </button>
+
+                        </td>
+
+                    </tr>
+
+                `;
+
+            }
+        );
+
+
+        html += `
+
+                </tbody>
+
+            </table>
+
+        `;
+
+
+        container.innerHTML =
+            html;
+
+    }
+
+
+    /*
+    ------------------------------------------
+    Удаление операции
+    ------------------------------------------
+    */
+
+    function deleteOperation(id) {
+
+        const operations =
+            getOperations();
+
+
+        const operation =
+            operations.find(
+                item =>
+                    item.id === id
+            );
+
+
+        if (!operation) {
+            return;
+        }
+
+
+        const confirmed =
+            confirm(
+                "Удалить эту операцию?"
+            );
+
+
+        if (!confirmed) {
+            return;
+        }
+
+
+        const filtered =
+            operations.filter(
+                item =>
+                    item.id !== id
+            );
+
+
+        saveOperations(filtered);
+
+
+        renderAll();
+
+    }
+
+
+    /*
+    ------------------------------------------
+    Формат даты
+    ------------------------------------------
+    */
+
+    function formatDate(date) {
+
+        if (!date) {
+            return "";
+        }
+
+
+        const parts =
+            date.split("-");
+
+
+        if (parts.length !== 3) {
+            return date;
+        }
+
+
+        return (
+            parts[2] +
+            "." +
+            parts[1] +
+            "." +
+            parts[0]
+        );
+
+    }
+
+
+    /*
+    ------------------------------------------
+    Защита HTML
+    ------------------------------------------
+    */
+
+    function escapeHtml(value) {
+
+        return String(value)
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
+
+    }
+
+
+    /*
+    ------------------------------------------
+    Обновить всё
+    ------------------------------------------
+    */
+
+    function renderAll() {
+
+        renderStatistics();
+
+        renderBalance();
+
+        renderOperations();
+
+    }
+
+
+    /*
+    ------------------------------------------
+    Закрытие modal по клику снаружи
+    ------------------------------------------
+    */
+
+    document
+        .getElementById("operationModal")
+        .addEventListener(
+            "click",
+            function(event) {
+
+                if (
+                    event.target === this
+                ) {
+
+                    closeModal();
+
+                }
+
+            }
+        );
+
+
+    /*
+    ------------------------------------------
+    ЗАПУСК
+    ------------------------------------------
+    */
+
+    renderAll();
+
+</script>
+
+</body>
+</html>
+```
